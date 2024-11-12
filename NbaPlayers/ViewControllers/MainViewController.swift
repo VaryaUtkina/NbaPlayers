@@ -46,11 +46,11 @@ final class MainViewController: UIViewController {
         setupNavigationBar()
         setupSubviews(segmentedControl, nbaTableView)
         setConstraints()
-        fetchPlayers()
+        fetchTeams()
     }
     
-    func fetchPlayers() {
-        networkManager.fetchPlayers(
+    func fetchTeams() {
+        networkManager.fetchTeams(
             with: NSURL(string: "https://sports-information.p.rapidapi.com/nba/team-list")!
         ) { result in
             switch result {

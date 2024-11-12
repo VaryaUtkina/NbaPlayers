@@ -18,7 +18,7 @@ final class NetworkManager {
     
     private init() {}
     
-    func fetchPlayers(with url: NSURL, completion: @escaping(Result<[Team],NetworkError>) -> Void) {
+    func fetchTeams(with url: NSURL, completion: @escaping(Result<[Team],NetworkError>) -> Void) {
         let headers = [
             "x-rapidapi-key": "8b70de7122mshf7d8da5b54e7c8ap129e91jsn91405a76579c",
             "x-rapidapi-host": "sports-information.p.rapidapi.com"
