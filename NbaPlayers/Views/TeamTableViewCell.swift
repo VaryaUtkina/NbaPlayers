@@ -40,6 +40,11 @@ final class TeamTableViewCell: UITableViewCell {
     func config(with team: Team) {
         teamLabel.text = team.displayName
         
+        teamImage.layer.shadowColor = UIColor(hex: team.color)?.cgColor
+        teamImage.layer.shadowRadius = 5
+        teamImage.layer.shadowOpacity = 0.5
+        teamImage.layer.shadowOffset = CGSize(width: 3, height: 3)
+        
         if let logo = team.logos.first?.href {
             networkManager.fetchImage(from: logo) { [unowned self] result in
                 switch result {

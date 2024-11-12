@@ -1,5 +1,5 @@
 //
-//  GameStatistic.swift
+//  NbaTeam.swift
 //  NbaPlayers
 //
 //  Created by Варвара Уткина on 11.11.2024.
