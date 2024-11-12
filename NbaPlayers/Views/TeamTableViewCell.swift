@@ -23,6 +23,8 @@ final class TeamTableViewCell: UITableViewCell {
         return label
     }()
     
+    private let networkManager = NetworkManager.shared
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupViews(teamImage, teamLabel)
@@ -37,6 +39,17 @@ final class TeamTableViewCell: UITableViewCell {
 
     func config(with team: Team) {
         teamLabel.text = team.displayName
+        
+        if let logo = team.logos.first?.href {
+            networkManager.fetchImage(from: logo) { [unowned self] result in
+                switch result {
+                case .success(let imageData):
+                    teamImage.image = UIImage(data: imageData)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        }
     }
     
     private func setupViews(_ views: UIView...) {

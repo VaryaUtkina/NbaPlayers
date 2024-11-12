@@ -10,7 +10,7 @@ import UIKit
 final class MainViewController: UIViewController {
 
     private lazy var segmentedControl: UISegmentedControl = {
-        let segControl = UISegmentedControl(items: ["Players", "Teams"])
+        let segControl = UISegmentedControl(items: ["Teams", "Players"])
         segControl.selectedSegmentIndex = 0
         segControl.translatesAutoresizingMaskIntoConstraints = false
         segControl.selectedSegmentTintColor = .darkOrange
