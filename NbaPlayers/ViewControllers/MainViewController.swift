@@ -9,10 +9,12 @@ import UIKit
 
 enum Link {
     case teams
+    case players
     
     var url: NSURL {
         switch self {
         case .teams: NSURL(string: "https://nba-api-free-data.p.rapidapi.com/nba-team-list")!
+        case .players: NSURL(string: "https://nba-api-free-data.p.rapidapi.com/nba-player-listing/v1/data?id=22")!
         }
     }
 }
@@ -57,11 +59,13 @@ final class MainViewController: UIViewController {
         setupNavigationBar()
         setupSubviews(segmentedControl, nbaTableView)
         setConstraints()
+        
         fetchTeams()
+        fetchPlayers()
     }
     
     private func fetchTeams() {
-        networkManager.fetch(from: Link.teams.url) { [weak self] result in
+        networkManager.fetchTeams(from: Link.teams.url) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let teams):
@@ -73,6 +77,10 @@ final class MainViewController: UIViewController {
                 print(error)
             }
         }
+    }
+    
+    private func fetchPlayers() {
+        networkManager.fetchPlayers(with: Link.players.url)
     }
 
 }

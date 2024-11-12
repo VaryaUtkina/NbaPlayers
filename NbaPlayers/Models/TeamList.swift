@@ -1,5 +1,5 @@
 //
-//  NbaTeam.swift
+//  TeamList.swift
 //  NbaPlayers
 //
 //  Created by Варвара Уткина on 11.11.2024.

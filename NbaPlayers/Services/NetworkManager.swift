@@ -16,14 +16,14 @@ final class NetworkManager {
     
     static let shared = NetworkManager()
     
+    private let headers = [
+        "x-rapidapi-key": "8b70de7122mshf7d8da5b54e7c8ap129e91jsn91405a76579c",
+        "x-rapidapi-host": "nba-api-free-data.p.rapidapi.com"
+    ]
+    
     private init() {}
     
-    func fetch(from nsUrl: NSURL, completion: @escaping(Result<[Team], NetworkError>) -> Void) {
-        let headers = [
-            "x-rapidapi-key": "8b70de7122mshf7d8da5b54e7c8ap129e91jsn91405a76579c",
-            "x-rapidapi-host": "nba-api-free-data.p.rapidapi.com"
-        ]
-
+    func fetchTeams(from nsUrl: NSURL, completion: @escaping(Result<[Team], NetworkError>) -> Void) {
         let request = NSMutableURLRequest(
             url: nsUrl as URL,
             cachePolicy: .useProtocolCachePolicy,
@@ -40,12 +40,35 @@ final class NetworkManager {
             
             do {
                 let decoder = JSONDecoder()
-                let teams = try decoder.decode(TeamList.self, from: data)
-                completion(.success(teams.teams))
+                let teamList = try decoder.decode(TeamList.self, from: data)
+                let teams = teamList.teams
+                completion(.success(teams))
             } catch {
                 completion(.failure(.decodingError))
             }
         }.resume()
+    }
+    
+    // TODO: - Fetch Players
+    func fetchPlayers(with nsUrl: NSURL) {
+        let request = NSMutableURLRequest(
+            url: nsUrl as URL,
+            cachePolicy: .useProtocolCachePolicy,
+            timeoutInterval: 10.0
+        )
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            if (error != nil) {
+                print(error as Any)
+            } else if let data, let jsonString = String(data: data, encoding: .utf8) {
+                print(jsonString)
+            }
+        })
+
+        dataTask.resume()
     }
     
     func fetchImage(from url: URL, completion: @escaping(Result<Data, NetworkError>) -> Void) {
