@@ -26,7 +26,7 @@ final class MainViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "playerCell")
+        tableView.register(TeamTableViewCell.self, forCellReuseIdentifier: "playerCell")
         return tableView
     }()
     
@@ -43,6 +43,7 @@ final class MainViewController: UIViewController {
             bottomColor: secondaryColor
         )
         view.backgroundColor = .screenUP
+        nbaTableView.rowHeight = 60
         setupNavigationBar()
         setupSubviews(segmentedControl, nbaTableView)
         setConstraints()
@@ -117,11 +118,11 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = nbaTableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+        let tableCell = nbaTableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+        guard let cell = tableCell as? TeamTableViewCell else { return UITableViewCell() }
+        let team = teams[indexPath.row]
         cell.backgroundColor = .clear
-        var content = cell.defaultContentConfiguration()
-        content.text = teams[indexPath.row].displayName
-        cell.contentConfiguration = content
+        cell.config(with: team)
         return cell
     }
 }

@@ -30,5 +30,5 @@ struct Team: Decodable {
 }
 
 struct Logo: Decodable {
-    let href: String
+    let href: URL
 }
