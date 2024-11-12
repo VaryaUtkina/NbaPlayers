@@ -20,7 +20,7 @@ final class MainViewController: UIViewController {
         return segControl
     }()
     
-    private lazy var playersList: UITableView = {
+    private lazy var nbaTableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -30,7 +30,8 @@ final class MainViewController: UIViewController {
         return tableView
     }()
     
-    private let players = GameStatistic.getGameStatistics()
+    private var teams: [Team] = []
+    private let networkManager = NetworkManager.shared
     
     private let primaryColor = UIColor.screenUP
     private let secondaryColor = UIColor.screenDown
@@ -43,11 +44,26 @@ final class MainViewController: UIViewController {
         )
         view.backgroundColor = .screenUP
         setupNavigationBar()
-        setupSubviews(segmentedControl, playersList)
+        setupSubviews(segmentedControl, nbaTableView)
         setConstraints()
+        fetchPlayers()
     }
     
-    // MARK: - UITableViewDataSource
+    func fetchPlayers() {
+        networkManager.fetchPlayers(
+            with: NSURL(string: "https://sports-information.p.rapidapi.com/nba/team-list")!
+        ) { result in
+            switch result {
+            case .success(let teams):
+                self.teams = teams
+                DispatchQueue.main.async { [unowned self] in
+                    nbaTableView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
 
 }
 
@@ -87,24 +103,24 @@ private extension MainViewController {
         ])
         
         NSLayoutConstraint.activate([
-            playersList.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
-            playersList.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            playersList.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            playersList.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+            nbaTableView.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 10),
+            nbaTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            nbaTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            nbaTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         ])
     }
 }
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        players.count
+        teams.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = playersList.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+        let cell = nbaTableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
         cell.backgroundColor = .clear
         var content = cell.defaultContentConfiguration()
-        content.text = players[indexPath.row].player.fullName
+        content.text = teams[indexPath.row].displayName
         cell.contentConfiguration = content
         return cell
     }
@@ -122,8 +138,8 @@ extension UIView {
         layer.insertSublayer(gradient, at: 0)
     }
 }
-
-#Preview {
-    UINavigationController(rootViewController: MainViewController())
-}
+//
+//#Preview {
+//    UINavigationController(rootViewController: MainViewController())
+//}
 
