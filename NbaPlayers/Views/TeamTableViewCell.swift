@@ -10,7 +10,6 @@ import UIKit
 final class TeamTableViewCell: UITableViewCell {
     private lazy var teamImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "moon")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -51,6 +50,8 @@ final class TeamTableViewCell: UITableViewCell {
                 case .success(let imageData):
                     teamImage.image = UIImage(data: imageData)
                 case .failure(let error):
+                    teamImage.image = UIImage(systemName: "basketball.circle")
+                    teamImage.tintColor = .darkOrange
                     print(error)
                 }
             }

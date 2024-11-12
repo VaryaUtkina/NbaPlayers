@@ -7,6 +7,16 @@
 
 import UIKit
 
+enum Link {
+    case teams
+    
+    var url: NSURL {
+        switch self {
+        case .teams: NSURL(string: "https://nba-api-free-data.p.rapidapi.com/nba-team-list")!
+        }
+    }
+}
+
 final class MainViewController: UIViewController {
 
     private lazy var segmentedControl: UISegmentedControl = {
@@ -50,15 +60,14 @@ final class MainViewController: UIViewController {
         fetchTeams()
     }
     
-    func fetchTeams() {
-        networkManager.fetchTeams(
-            with: NSURL(string: "https://sports-information.p.rapidapi.com/nba/team-list")!
-        ) { result in
+    private func fetchTeams() {
+        networkManager.fetch(from: Link.teams.url) { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let teams):
                 self.teams = teams
                 DispatchQueue.main.async { [unowned self] in
-                    nbaTableView.reloadData()
+                    self.nbaTableView.reloadData()
                 }
             case .failure(let error):
                 print(error)

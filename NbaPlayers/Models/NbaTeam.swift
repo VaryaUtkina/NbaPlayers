@@ -7,20 +7,8 @@
 
 import Foundation
 
-struct NbaTeam: Decodable {
-    let sports: [Sport]
-}
-
-struct Sport: Decodable {
-    let leagues:  [League]
-}
-
-struct League: Decodable {
-    let teams: [TeamList]
-}
-
 struct TeamList: Decodable {
-    let team: Team
+    let teams: [Team]
 }
 
 struct Team: Decodable {
