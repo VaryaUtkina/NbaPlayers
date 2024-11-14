@@ -65,15 +65,11 @@ final class MainViewController: UIViewController {
     }
     
     private func fetchTeams() {
-        networkManager.fetchTeams(from: Link.teams.url) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let teams):
-                self.teams = teams
-                DispatchQueue.main.async { [unowned self] in
-                    self.nbaTableView.reloadData()
-                }
-            case .failure(let error):
+        Task {
+            do {
+                teams = try await networkManager.fetchTeams()
+                nbaTableView.reloadData()
+            } catch {
                 print(error)
             }
         }
@@ -156,8 +152,5 @@ extension UIView {
         layer.insertSublayer(gradient, at: 0)
     }
 }
-//
-//#Preview {
-//    UINavigationController(rootViewController: MainViewController())
-//}
+
 
