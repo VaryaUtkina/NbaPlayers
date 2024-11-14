@@ -27,7 +27,7 @@ final class MainViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(TeamTableViewCell.self, forCellReuseIdentifier: "teamCell")
-        tableView.register(TeamTableViewCell.self, forCellReuseIdentifier: "playerCell")
+        tableView.register(PlayerTableViewCell.self, forCellReuseIdentifier: "playerCell")
         return tableView
     }()
     
@@ -145,12 +145,11 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             return cell
         } else {
             let tableCell = nbaTableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+            guard let cell = tableCell as? PlayerTableViewCell else { return UITableViewCell() }
             let player = players[indexPath.row]
-            var content = tableCell.defaultContentConfiguration()
-            content.text = player.fullName
-            tableCell.contentConfiguration = content
-            tableCell.backgroundColor = .clear
-            return tableCell
+            cell.config(with: player)
+            cell.backgroundColor = .clear
+            return cell
         }
     }
 }
