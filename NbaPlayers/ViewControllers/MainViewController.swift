@@ -16,6 +16,7 @@ final class MainViewController: UIViewController {
         segControl.selectedSegmentTintColor = .darkOrange
         segControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
         segControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
+        segControl.addTarget(self, action: #selector(segmentChange), for: .valueChanged)
         return segControl
     }()
     
@@ -25,6 +26,7 @@ final class MainViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.register(TeamTableViewCell.self, forCellReuseIdentifier: "teamCell")
         tableView.register(TeamTableViewCell.self, forCellReuseIdentifier: "playerCell")
         return tableView
     }()
@@ -51,6 +53,10 @@ final class MainViewController: UIViewController {
         fetchPlayers()
     }
     
+    @objc private func segmentChange() {
+        nbaTableView.reloadData()
+    }
+    
     private func fetchTeams() {
         Task {
             do {
@@ -66,6 +72,9 @@ final class MainViewController: UIViewController {
         Task {
             do {
                 players = try await networkManager.fetchPlayers()
+                if segmentedControl.selectedSegmentIndex == 1 {
+                    nbaTableView.reloadData()
+                }
             } catch {
                 print(error)
             }
@@ -123,16 +132,26 @@ private extension MainViewController {
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        teams.count
+        segmentedControl.selectedSegmentIndex == 0 ? teams.count : players.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let tableCell = nbaTableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
-        guard let cell = tableCell as? TeamTableViewCell else { return UITableViewCell() }
-        let team = teams[indexPath.row]
-        cell.backgroundColor = .clear
-        cell.config(with: team)
-        return cell
+        if segmentedControl.selectedSegmentIndex == 0 {
+            let tableCell = nbaTableView.dequeueReusableCell(withIdentifier: "teamCell", for: indexPath)
+            guard let cell = tableCell as? TeamTableViewCell else { return UITableViewCell() }
+            let team = teams[indexPath.row]
+            cell.backgroundColor = .clear
+            cell.config(with: team)
+            return cell
+        } else {
+            let tableCell = nbaTableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+            let player = players[indexPath.row]
+            var content = tableCell.defaultContentConfiguration()
+            content.text = player.fullName
+            tableCell.contentConfiguration = content
+            tableCell.backgroundColor = .clear
+            return tableCell
+        }
     }
 }
 

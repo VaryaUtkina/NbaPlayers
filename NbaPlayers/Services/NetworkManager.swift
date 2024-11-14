@@ -36,7 +36,6 @@ final class NetworkManager {
     
     private init() {}
     
-    // TODO: - Fetch Players
     func fetchPlayers() async throws -> [Player] {
         guard let url = Link.players.url else {
             throw NetworkError.invalidURL
