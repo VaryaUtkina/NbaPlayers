@@ -36,37 +36,6 @@ final class NetworkManager {
     
     private init() {}
     
-    func fetchTeams(from nsUrl: NSURL, completion: @escaping(Result<[Team], NetworkError>) -> Void) {
-        let request = NSMutableURLRequest(
-            url: nsUrl as URL,
-            cachePolicy: .useProtocolCachePolicy,
-            timeoutInterval: 10.0
-        )
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = headers
-
-        URLSession.shared.dataTask(with: request as URLRequest){ data, _, error in
-            guard let data else {
-                completion(.failure(.noData))
-                print(error?.localizedDescription ?? "No error description")
-                return
-            }
-            
-            do {
-                let decoder = JSONDecoder()
-                let teamList = try decoder.decode(TeamList.self, from: data)
-                let teams = teamList.teams
-                DispatchQueue.main.async {
-                    completion(.success(teams))
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(.failure(.decodingError))
-                }
-            }
-        }.resume()
-    }
-    
     // TODO: - Fetch Players
     func fetchPlayers(with nsUrl: NSURL) {
         let request = NSMutableURLRequest(
@@ -87,18 +56,6 @@ final class NetworkManager {
         })
 
         dataTask.resume()
-    }
-    
-    func fetchImage(from url: URL, completion: @escaping(Result<Data, NetworkError>) -> Void) {
-        DispatchQueue.global().async {
-            guard let imageData = try? Data(contentsOf: url) else {
-                completion(.failure(.noData))
-                return
-            }
-            DispatchQueue.main.async {
-                completion(.success(imageData))
-            }
-        }
     }
     
     func fetchTeams() async throws -> [Team] {

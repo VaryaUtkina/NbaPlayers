@@ -14,7 +14,6 @@ final class MainViewController: UIViewController {
         segControl.selectedSegmentIndex = 0
         segControl.translatesAutoresizingMaskIntoConstraints = false
         segControl.selectedSegmentTintColor = .darkOrange
-        segControl.backgroundColor = .clear
         segControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
         segControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
         return segControl
@@ -42,7 +41,6 @@ final class MainViewController: UIViewController {
             topColor: primaryColor,
             bottomColor: secondaryColor
         )
-        view.backgroundColor = .screenUP
         nbaTableView.rowHeight = 60
         setupNavigationBar()
         setupSubviews(segmentedControl, nbaTableView)
@@ -70,7 +68,7 @@ final class MainViewController: UIViewController {
 }
 
 
-// MARK: - Setup UI
+// MARK: - Setup NavigationBar
 private extension MainViewController {
     func setupNavigationBar() {
         title = "NBA Players"
@@ -79,10 +77,14 @@ private extension MainViewController {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         
-        navBarAppearance.backgroundColor = .screenUP
+        navBarAppearance.backgroundColor = .clear
+        navBarAppearance.shadowColor = .clear
         
         navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance

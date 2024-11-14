@@ -49,16 +49,6 @@ final class TeamTableViewCell: UITableViewCell {
         } else {
             setDefaultImage()
         }
-//            networkManager.fetchImage(from: logo) { [unowned self] result in
-//                switch result {
-//                case .success(let imageData):
-//                    teamImage.image = UIImage(data: imageData)
-//                case .failure(let error):
-//                    teamImage.image = UIImage(systemName: "basketball.circle")
-//                    teamImage.tintColor = .darkOrange
-//                    print(error)
-//                }
-//            }
     }
 
     @MainActor
