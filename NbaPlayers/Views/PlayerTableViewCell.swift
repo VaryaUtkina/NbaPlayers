@@ -22,6 +22,15 @@ final class PlayerTableViewCell: UITableViewCell {
         return label
     }()
     
+    // TODO: - Setup position label
+    private lazy var positionLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 15)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private let networkManager = NetworkManager.shared
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
