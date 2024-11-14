@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct PlayerList: Decodable {
+    let athletes: [Player]
+}
+
 struct Player: Decodable {
     let fullName: String
     let weight: Int
@@ -16,7 +20,7 @@ struct Player: Decodable {
     let birthPlace: BirthPlace
     let headshot: Photo
     let position: Position
-    let contracts: [Contract]
+    let contract: Contract
     let experience: Experience
 }
 
@@ -40,7 +44,7 @@ struct Experience: Decodable {
 
 struct Contract: Decodable {
     let salary: Int
-    let season: [Season]
+    let season: Season
 }
 
 struct Season: Decodable {

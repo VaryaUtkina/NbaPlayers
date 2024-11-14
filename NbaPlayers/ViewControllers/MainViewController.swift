@@ -30,6 +30,7 @@ final class MainViewController: UIViewController {
     }()
     
     private var teams: [Team] = []
+    private var players: [Player] = []
     private let networkManager = NetworkManager.shared
     
     private let primaryColor = UIColor.screenUP
@@ -62,9 +63,14 @@ final class MainViewController: UIViewController {
     }
     
     private func fetchPlayers() {
-        
+        Task {
+            do {
+                players = try await networkManager.fetchPlayers()
+            } catch {
+                print(error)
+            }
+        }
     }
-
 }
 
 

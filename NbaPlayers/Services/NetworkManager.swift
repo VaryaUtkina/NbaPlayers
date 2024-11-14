@@ -37,25 +37,27 @@ final class NetworkManager {
     private init() {}
     
     // TODO: - Fetch Players
-    func fetchPlayers(with nsUrl: NSURL) {
+    func fetchPlayers() async throws -> [Player] {
+        guard let url = Link.players.url else {
+            throw NetworkError.invalidURL
+        }
         let request = NSMutableURLRequest(
-            url: nsUrl as URL,
+            url: url as URL,
             cachePolicy: .useProtocolCachePolicy,
             timeoutInterval: 10.0
         )
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
 
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            if (error != nil) {
-                print(error as Any)
-            } else if let data, let jsonString = String(data: data, encoding: .utf8) {
-                print(jsonString)
-            }
-        })
-
-        dataTask.resume()
+        let (data, _) = try await URLSession.shared.data(for: request as URLRequest)
+        let decoder = JSONDecoder()
+        
+        do {
+            let playerList = try decoder.decode(PlayerList.self, from: data)
+            return playerList.athletes
+        } catch {
+            throw NetworkError.decodingError
+        }
     }
     
     func fetchTeams() async throws -> [Team] {
