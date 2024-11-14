@@ -34,6 +34,7 @@ final class NetworkManager {
 
         URLSession.shared.dataTask(with: request as URLRequest){ data, _, error in
             guard let data else {
+                completion(.failure(.noData))
                 print(error?.localizedDescription ?? "No error description")
                 return
             }
@@ -42,9 +43,13 @@ final class NetworkManager {
                 let decoder = JSONDecoder()
                 let teamList = try decoder.decode(TeamList.self, from: data)
                 let teams = teamList.teams
-                completion(.success(teams))
+                DispatchQueue.main.async {
+                    completion(.success(teams))
+                }
             } catch {
-                completion(.failure(.decodingError))
+                DispatchQueue.main.async {
+                    completion(.failure(.decodingError))
+                }
             }
         }.resume()
     }
@@ -80,6 +85,28 @@ final class NetworkManager {
             DispatchQueue.main.async {
                 completion(.success(imageData))
             }
+        }
+    }
+    
+    func fetchTeams() async throws -> [Team] {
+        let nsUrl = Link.teams.url
+        let request = NSMutableURLRequest(
+            url: nsUrl as URL,
+            cachePolicy: .useProtocolCachePolicy,
+            timeoutInterval: 10.0
+        )
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        
+        
+        let (data, _) = try await URLSession.shared.data(for: request as URLRequest)
+        let decoder = JSONDecoder()
+        
+        do {
+            let teamList = try decoder.decode(TeamList.self, from: data)
+            return teamList.teams
+        } catch {
+            throw NetworkError.decodingError
         }
     }
 }
