@@ -7,18 +7,6 @@
 
 import UIKit
 
-enum Link {
-    case teams
-    case players
-    
-    var url: NSURL {
-        switch self {
-        case .teams: NSURL(string: "https://nba-api-free-data.p.rapidapi.com/nba-team-list")!
-        case .players: NSURL(string: "https://nba-api-free-data.p.rapidapi.com/nba-player-listing/v1/data?id=22")!
-        }
-    }
-}
-
 final class MainViewController: UIViewController {
 
     private lazy var segmentedControl: UISegmentedControl = {
@@ -76,7 +64,7 @@ final class MainViewController: UIViewController {
     }
     
     private func fetchPlayers() {
-        networkManager.fetchPlayers(with: Link.players.url)
+        
     }
 
 }

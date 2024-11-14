@@ -44,18 +44,43 @@ final class TeamTableViewCell: UITableViewCell {
         teamImage.layer.shadowOpacity = 0.5
         teamImage.layer.shadowOffset = CGSize(width: 3, height: 3)
         
-        if let logo = team.logos.first?.href {
-            networkManager.fetchImage(from: logo) { [unowned self] result in
-                switch result {
-                case .success(let imageData):
-                    teamImage.image = UIImage(data: imageData)
-                case .failure(let error):
-                    teamImage.image = UIImage(systemName: "basketball.circle")
-                    teamImage.tintColor = .darkOrange
-                    print(error)
+        if let logoURL = team.logos.first?.href {
+            fetchImage(from: logoURL)
+        } else {
+            setDefaultImage()
+        }
+//            networkManager.fetchImage(from: logo) { [unowned self] result in
+//                switch result {
+//                case .success(let imageData):
+//                    teamImage.image = UIImage(data: imageData)
+//                case .failure(let error):
+//                    teamImage.image = UIImage(systemName: "basketball.circle")
+//                    teamImage.tintColor = .darkOrange
+//                    print(error)
+//                }
+//            }
+    }
+
+    @MainActor
+    private func fetchImage(from url: URL) {
+        Task {
+            do {
+                let imageData = try await networkManager.fetchImage(from: url)
+                if let image = UIImage(data: imageData) {
+                    teamImage.image = image
+                } else {
+                    setDefaultImage()
                 }
+            } catch {
+                setDefaultImage()
+                print(error)
             }
         }
+    }
+    
+    private func setDefaultImage() {
+        teamImage.image = UIImage(systemName: "basketball.circle")
+        teamImage.tintColor = .darkOrange
     }
     
     private func setupViews(_ views: UIView...) {
@@ -80,4 +105,5 @@ final class TeamTableViewCell: UITableViewCell {
     }
     
 }
+
 

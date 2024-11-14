@@ -7,9 +7,22 @@
 
 import Foundation
 
+enum Link {
+    case teams
+    case players
+    
+    var url: NSURL? {
+        switch self {
+        case .teams: NSURL(string: "https://nba-api-free-data.p.rapidapi.com/nba-team-list")
+        case .players: NSURL(string: "https://nba-api-free-data.p.rapidapi.com/nba-player-listing/v1/data?id=22")
+        }
+    }
+}
+
 enum NetworkError: Error {
     case noData
     case decodingError
+    case invalidURL
 }
 
 final class NetworkManager {
@@ -89,7 +102,10 @@ final class NetworkManager {
     }
     
     func fetchTeams() async throws -> [Team] {
-        let nsUrl = Link.teams.url
+        guard let nsUrl = Link.teams.url else {
+            throw NetworkError.invalidURL
+        }
+        
         let request = NSMutableURLRequest(
             url: nsUrl as URL,
             cachePolicy: .useProtocolCachePolicy,
@@ -107,6 +123,16 @@ final class NetworkManager {
             return teamList.teams
         } catch {
             throw NetworkError.decodingError
+        }
+    }
+    
+    func fetchImage(from url: URL?) async throws -> Data {
+        guard let url = url else { throw NetworkError.invalidURL }
+        
+        do {
+            return try Data(contentsOf: url)
+        } catch {
+            throw NetworkError.noData
         }
     }
 }
